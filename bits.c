@@ -67,18 +67,23 @@ int samesign(int x, int y) {
 int logtwo(int v) {
     int ans=0;
     int t;
+
     t=(v>0xffff)<<4;
     ans=ans|t;
     v=v>>t;
+
     t=(v>0xff)<<3;
     ans=ans|t;
     v=v>>t;
+
     t=(v>0xf)<<2;
     ans=ans|t;
     v=v>>t;
+
     t=(v>0x3)<<1;
     ans=ans|t;
     v=v>>t;
+
     ans=ans|(v>0x1);
     return ans;
 }
@@ -93,10 +98,10 @@ int logtwo(int v) {
  *    Difficulty: 2
  */
 int byteSwap(int x, int n, int m) {
-    int a=(x>>(n<<3))&0xff;
-    int b=(x>>(m<<3))&0xff;
-    int d=a^b;
-    return x^(d<<(n<<3))^(d<<(m<<3));
+    int nnum=(x>>(n<<3))&0xFF;
+    int mnum=(x>>(m<<3))&0xFF;
+    int dif=nnum^mnum;
+    return x^(dif<<(n<<3))^(dif<<(m<<3));
 }
 
 /*
@@ -108,12 +113,13 @@ int byteSwap(int x, int n, int m) {
  *   Difficulty: 3
  */
 unsigned reverse(unsigned v) {
-    unsigned b=0;
-    int c=32;
-    while (c) {
-        b=(b<<1)|(v&1);
+    unsigned b=0x0;
+    int count=32;
+    while (count)
+    {
+        b=(b<<1)|(v&0x1);
         v=v>>1;
-        c=c-1;
+        count=count-1;
     }
     return b;
 }
@@ -141,21 +147,27 @@ int logicalShift(int x, int n) {
 int leftBitCount(int x) {
     int ans=0;
     int t;
+
     t=!(~x>>16)<<4;
     ans=ans+t;
     x=x<<t;
+
     t=!(~x>>24)<<3;
     ans=ans+t;
     x=x<<t;
+
     t=!(~x>>28)<<2;
     ans=ans+t;
     x=x<<t;
+
     t=!(~x>>30)<<1;
     ans=ans+t;
     x=x<<t;
+
     t=!(~x>>31);
     ans=ans+t;
     x=x<<t;
+
     return ans+((x>>31)&1);
 }
 
@@ -175,18 +187,22 @@ unsigned float_i2f(int x) {
     unsigned half;
     int e=0;
     int t;
+
     if (!x) return 0;
+
     if (s) {
         a=~x;
         a=a+1;
     } else {
         a=x;
     }
+
     f=a;
     while (f>>1) {
         f=f>>1;
         e=e+1;
     }
+
     if (e<24) {
         f=a<<(23-e);
     } else {
@@ -194,9 +210,11 @@ unsigned float_i2f(int x) {
         f=a>>t;
         lost=a&((1<<t)-1);
         half=1<<(t-1);
+
         if (lost>half) f=f+1;
         if (lost==half) f=f+(f&1);
     }
+
     return s|(((e+126)<<23)+f);
 }
 
@@ -213,10 +231,12 @@ unsigned float_i2f(int x) {
  */
 unsigned floatScale2(unsigned uf) {
     unsigned e=uf&0x7f800000;
+
     if (e==0x7f800000) return uf;
     if (!e) return (uf<<1)|(uf&0x80000000);
     if (e==0x7f000000)
         return (uf&0x80000000)|0x7f800000;
+
     return uf+0x00800000;
 }
 
@@ -240,10 +260,8 @@ int float64_f2i(unsigned uf1, unsigned uf2) {
     unsigned value;
     if (e<0) return 0;
     if (e>=31) return 0x80000000;
-    if (e<=20)
-        value=high>>(20-e);
-    else
-        value=(high<<(e-20))|(uf1>>(52-e));
+    if (e<=20) value=high>>(20-e);
+    else value=(high<<(e-20))|(uf1>>(52-e));
     if (s) return ~value+1;
     return value;
 }
